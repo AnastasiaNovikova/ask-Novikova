@@ -7,8 +7,12 @@ from . import views
 
 urlpatterns = patterns('',
     # Examples:
-    # url(r'^$', 'askNovikova.views.home', name='home'),
-    url(r'^/time/', views.current_datetime(request)),
+    
+    url(r'^time/', views.current_datetime),
+
+    url(r'^test/', views.test),
 
     url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^', include('askMe.urls')),
 )

@@ -1,9 +1,9 @@
+from cgi import parse_qs
+
 def application(environ, start_response):
-    status = '200 OK'
-    output = 'Hello World!'
-
-    response_headers = [('Content-type', 'text/plain'),
-                        ('Content-Length', str(len(output)))]
-    start_response(status, response_headers)
-
-    return [output]
+    outString = environ['REQUEST_METHOD'] + "\n"
+    paramDic = parse_qs(environ['QUERY_STRING'])
+    for i in paramDic.items():
+        outString = outString + i[0] + " = " + str(i[1][0]) + "\n"
+    start_response("200 OK", [("Content-Type", "text/plain")])
+    return [outString]
