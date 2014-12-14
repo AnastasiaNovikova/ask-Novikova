@@ -1,15 +1,20 @@
+from django.contrib.auth.models import User
+from django.db.models import Count
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.template import RequestContext, loader
+from models import Question, Tag
 
 import datetime
 # Create your views here.
-def landingPage(request):
-	now = datetime.datetime.now()
-	html = "<html><body>It is now %s.</body></html>" % now
-	return HttpResponse(html)
-def signup(request):
-	template = loader.get_template('askMe/index.html')
-	return HttpResponse(template)
-def login(request):
-	return HttpResponse("Hello, world. You're at the askMe-> login.")
+def index(request):
+    q_list = Question.objects.select_related('author', 'author__profile').order_by('-adding_date')[:5]
+    tag_list = Tag.objects.annotate(num_questions=Count('question')).order_by('-num_questions')[:15]
+    author_list = User.objects.annotate(num_questions=Count('answer')).order_by('-num_questions')[:15]
+
+    context = {}
+    context['text'] = 'Hello world'
+    context['latestQuestions'] = q_list
+    context['popularTags'] = tag_list
+    context['bestMembers'] = author_list
+    return render(request, 'askMe/index.html', context)
